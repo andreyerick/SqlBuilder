@@ -13,7 +13,7 @@ if (searchModel.Id != null)
 if (searchModel.OtherId != null)
 {
     builder.InnerJoin("OtherEntity ON OtherEntity.ExampleId=ExampleEntity.Id");
-	builder.Where($"ExampleEntity.OtherId=@otherId", new SqlParameter("@otherId", searchModel.OtherId));
+    builder.Where($"ExampleEntity.OtherId=@otherId", new SqlParameter("@otherId", searchModel.OtherId));
 }
 
 if (!string.IsNullOrWhiteSpace(searchModel.Query))
@@ -37,25 +37,38 @@ To prevent SQL injection attacks, always pass parameters to the builder instead 
 
 ### Constructor
 `SqlBuilder(string template)`
+
 Use `%JOIN%`, `%WHERE%`, `%ORDER%` in your template to replace with joins, where and order by clauses.
 Unused clauses will be removed from the final query.
+
 Example:
-`var builder = new SqlBuilder("SELECT ExampleEntity.* FROM ExampleEntity %JOIN% %WHERE% %ORDER%");`
+```csharp
+var builder = new SqlBuilder("SELECT ExampleEntity.* FROM ExampleEntity %JOIN% %WHERE% %ORDER%");
+```
 
 ### Join
-Use `builder.InnerJoin(string innerJoin)`, `builder.LeftJoin(string leftJoin)` and `builder.RightJoin(string rightJoin)` 
+Use `builder.InnerJoin(string innerJoin)`, `builder.LeftJoin(string leftJoin)` and `builder.RightJoin(string rightJoin)`
+
 Example: 
-`builder.InnerJoin("OtherEntity ON OtherEntity.ExampleId=ExampleEntity.Id")`
+```csharp
+builder.InnerJoin("OtherEntity ON OtherEntity.ExampleId=ExampleEntity.Id")
+```
 
 ### Where
 Use `builder.Where(string where, params SqlParameter[] sqlParameters)`
+
 Example:
-`builder.Where($"Id=@id", new SqlParameter("@id", searchModel.Id))`
+```csharp
+builder.Where("Id=@id", new SqlParameter("@id", searchModel.Id))
+```
 
 ### Order
 Use `builder.Order(string order)`
+
 Example:
-`builder.Order("Id DESC")`
+```csharp
+builder.Order("Id DESC")
+```
 
 ### Sql
 Use `builder.Sql` or `builder.GetSql()` to get the final query string
@@ -65,5 +78,8 @@ Use `builder.SqlParameters` or `builder.GetSqlParameters()` to get the final que
 
 ### Execute SQL
 Call `DbContext.DbSet<TEntity>.FromSqlRaw()` with `builder.Sql` and `builder.SqlParameters` to execute the query
+
 Example:
-`var exampleEntities = _context.ExampleEntities.FromSqlRaw(builder.Sql, builder.SqlParameters).ToList();`
+```csharp
+var exampleEntities = _context.ExampleEntities.FromSqlRaw(builder.Sql, builder.SqlParameters).ToList();
+```
